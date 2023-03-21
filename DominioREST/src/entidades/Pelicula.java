@@ -37,6 +37,8 @@ public class Pelicula implements Serializable {
 
     public Pelicula() {
     }
+    
+    
 
     public Pelicula(String nombre, String director, String sinopsis) {
         this.nombre = nombre;
