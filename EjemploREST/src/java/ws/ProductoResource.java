@@ -4,8 +4,13 @@
  */
 package ws;
 
+import entidades.Pelicula;
 import entidades.Producto;
+import implementaciones.DAOFactory;
+import implementaciones.PeliculasDAO;
+import interfaces.IPeliculasDAO;
 import java.util.Arrays;
+import java.util.List;
 //import javax.ws.rs.core.Context;
 //import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
@@ -30,16 +35,13 @@ public class ProductoResource {
 //    @Context
 //    private UriInfo context;
 
-    private Producto[] productos;
-
+    private Pelicula[] productos;
+    IPeliculasDAO peliculasDAO = DAOFactory.crearJugadoresDAO();
+    
     
     public ProductoResource() {
          
-         productos = new Producto[] {
-            new Producto(1, "Producto1"),
-            new Producto(2, "Producto2"),
-            new Producto(3, "Producto3")
-        };
+        
     }
 
     /**
@@ -49,27 +51,25 @@ public class ProductoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getJson() {
+        List<Pelicula> listaPeliculas = peliculasDAO.consultarTodos();
+        productos=listaPeliculas.toArray(new Pelicula[listaPeliculas.size()]);
         return Response.status(Response.Status.OK).entity(productos).build();      
     }
     
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getJsonById(@PathParam("id") int id) {
+    public Response getJsonById(@PathParam("id") Long id) {
         // Buscamos el producto con el id especificado
-        Producto productoEncontrado = null;
-        for (Producto producto : productos) {
-            if (producto.getId() == id) {
-                productoEncontrado = producto;
-                break;
-            }
-        }
+        Pelicula peliculaEncontrada = null;
+        
+        peliculaEncontrada = peliculasDAO.buscarID(id);
         // Si no se encuentra el producto, se devuelve una respuesta con código 404 Not Found
-        if (productoEncontrado == null) {
+        if (peliculaEncontrada == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         // Si se encuentra el producto, se devuelve una respuesta con código 200 OK y el producto en formato JSON
-        return Response.status(Response.Status.OK).entity(productoEncontrado).build();
+        return Response.status(Response.Status.OK).entity(peliculaEncontrada).build();
     }
 
     
@@ -77,9 +77,7 @@ public class ProductoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response postJson(Producto producto) {
-        Producto[] nuevosProductos = Arrays.copyOf(productos, productos.length + 1);
-        nuevosProductos[nuevosProductos.length - 1] = producto;
-        productos = nuevosProductos;
+        
         return Response.status(Response.Status.CREATED).entity(producto).build();
     }
 
@@ -94,12 +92,7 @@ public class ProductoResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putJson(@PathParam("id") int id, Producto producto) {
-        for (int i = 0; i < productos.length; i++) {
-            if (productos[i].getId() == id) {
-                productos[i] = producto;
-                return Response.status(Response.Status.OK).entity(producto).build();
-            }
-        }
+        
         return Response.status(Response.Status.NOT_FOUND).build();
     }
     
@@ -107,15 +100,6 @@ public class ProductoResource {
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteJson(@PathParam("id") int id) {
-        for (int i = 0; i < productos.length; i++) {
-            if (productos[i].getId() == id) {
-                Producto[] nuevosProductos = new Producto[productos.length - 1];
-                System.arraycopy(productos, 0, nuevosProductos, 0, i);
-                System.arraycopy(productos, i + 1, nuevosProductos, i, productos.length - i - 1);
-                productos = nuevosProductos;
-                return Response.status(Response.Status.OK).entity("Se ha eliminado el producto con el Id " + (i+1)).build();
-            }
-        }
         return Response.status(Response.Status.NOT_FOUND).entity("No se ha encontrado el recurso a eliminar.").build();
     }
 }
