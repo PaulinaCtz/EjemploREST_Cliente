@@ -21,6 +21,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -70,6 +71,18 @@ public class ProductoResource {
         }
         // Si se encuentra el producto, se devuelve una respuesta con código 200 OK y el producto en formato JSON
         return Response.status(Response.Status.OK).entity(peliculaEncontrada).build();
+    }
+    @GET
+    @Path("/query")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getJsonByDirector(@QueryParam("director") String director){
+        List<Pelicula> listaPeliculas = peliculasDAO.consultarDirector(director);
+        if(listaPeliculas.isEmpty()){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        
+        productos=listaPeliculas.toArray(new Pelicula[listaPeliculas.size()]);
+        return Response.status(Response.Status.OK).entity(productos).build();  
     }
 
     

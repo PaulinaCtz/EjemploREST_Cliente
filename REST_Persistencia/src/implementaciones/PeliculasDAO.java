@@ -9,6 +9,7 @@ import interfaces.IConexionBD;
 import interfaces.IPeliculasDAO;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -89,6 +90,20 @@ public class PeliculasDAO implements IPeliculasDAO {
             System.err.println("No se pudo eliminar la pelicula");
             ex.printStackTrace();
             return false;
+        }
+    }
+    @Override
+    public List<Pelicula> consultarDirector(String director) {
+       
+       try{
+           EntityManager em = this.conexion.crearConexion();
+           TypedQuery<Pelicula> query = em.createQuery("SELECT p FROM Pelicula p WHERE p.director LIKE :director", Pelicula.class);
+           query.setParameter("director", "%" + director + "%");
+           return query.getResultList();
+       } catch (IllegalStateException ex){
+            System.err.println("No se pudo realizar la consulta.");
+            ex.printStackTrace();
+            return null;
         }
     }
 }

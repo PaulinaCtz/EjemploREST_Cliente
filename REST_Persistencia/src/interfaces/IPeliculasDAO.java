@@ -17,4 +17,5 @@ public interface IPeliculasDAO {
     public boolean agregar (Pelicula pelicula);
     public boolean actualizar (Pelicula pelicula);
     public boolean eliminar (Long id);
+    public List<Pelicula>consultarDirector(String director);
 }
