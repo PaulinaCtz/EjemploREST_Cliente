@@ -97,11 +97,8 @@ public class ClienteREST {
                     Long idConsultar = scanner.nextLong();
                     Pelicula peliculaConsultar = cliente.consultarPeliculaPorID(String.valueOf(idConsultar));
                     if (peliculaConsultar != null) {
-                        System.out.println("Pelicula enocntrada");
-                        System.out.println("ID: " + peliculaConsultar.getId());
-                        System.out.println("Título: " + peliculaConsultar.getNombre());
-                        System.out.println("Director: " + peliculaConsultar.getDirector());
-                        System.out.println("Sinopsis: " + peliculaConsultar.getSinopsis());
+                        System.out.println("Pelicula encontrada");
+                        System.out.println(peliculaConsultar.toString());
                     } else {
                         System.out.println("Pelicula no encontrada");
                     }
@@ -111,11 +108,7 @@ public class ClienteREST {
                     List<Pelicula> peliculas = cliente.consultarPeliculas();
                     System.out.println("\nPeliculas encontradas: " + peliculas.size());
                     for (Pelicula pelicula : peliculas) {
-                        System.out.println("ID: " + pelicula.getId());
-                        System.out.println("Título: " + pelicula.getNombre());
-                        System.out.println("Director: " + pelicula.getDirector());
-                        System.out.println("Sinopsis: " + pelicula.getSinopsis());
-                        System.out.println("");
+                        System.out.println(pelicula.toString());
                     }
                     break;
 
@@ -126,11 +119,7 @@ public class ClienteREST {
                     List<Pelicula> peliculasConsultadas = cliente.consultarPeliculaPorDirector(String.valueOf(directorConsultar));
                     if (!peliculasConsultadas.isEmpty()) {
                         for (Pelicula pelicula : peliculasConsultadas) {
-                            System.out.println("ID: " + pelicula.getId());
-                            System.out.println("Título: " + pelicula.getNombre());
-                            System.out.println("Director: " + pelicula.getDirector());
-                            System.out.println("Sinopsis: " + pelicula.getSinopsis());
-                            System.out.println("");
+                            System.out.println(pelicula.toString());
                         }
                     } else {
                         System.out.println("Peliculas no encontradas");
