@@ -4,7 +4,10 @@
  */
 package ws;
 
+import entidades.Pelicula;
 import entidades.Producto;
+import java.util.Arrays;
+import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
@@ -34,29 +37,85 @@ public class clienteProducto {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("producto");
     }
-
-    public Response putJson(Producto producto, int id) throws ClientErrorException {
-        return webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(producto, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
-    }
-
-    public Response postJson(Producto producto) throws ClientErrorException {
-        return webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(producto, javax.ws.rs.core.MediaType.APPLICATION_JSON), Response.class);
-    }
-
-    public Response deleteJson(int id) throws ClientErrorException {
-        return webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete(Response.class);
-    }
-
-    public Producto getJsonById(int id) throws ClientErrorException {
+	
+	public boolean agregarPelicula(Pelicula pelicula) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(Producto.class);
+        Pelicula peliculaAgregada = null;
+        try {
+            peliculaAgregada = resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+                    post(javax.ws.rs.client.Entity.entity(pelicula, 
+							javax.ws.rs.core.MediaType.APPLICATION_JSON),
+							Pelicula.class);
+			
+        return peliculaAgregada!=null;
+        } catch (Exception e) {
+            System.out.println("Error; " + e.getMessage());
+            return false;
+        }
+
     }
-    
-    public Producto[] getJson() throws ClientErrorException {
+	 
+	public boolean actualizarPelicula(Pelicula pelicula, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
-        Invocation.Builder request = resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON);
-        return request.get(Producto[].class);
+        Pelicula peliculaAct = null;
+        try {
+            resource = resource.path(java.text.MessageFormat.format("{0}",
+                    new Object[]{id}));
+            peliculaAct = resource.request(
+                    javax.ws.rs.core.MediaType.APPLICATION_JSON).
+                    put(javax.ws.rs.client.Entity.entity(pelicula,
+							javax.ws.rs.core.MediaType.APPLICATION_JSON), 
+							Pelicula.class);
+			return true;
+        } catch (Exception e) {
+            System.out.println("Error; " + e.getMessage());
+            return false;
+        }
+        
+    }
+
+    public boolean eliminarPelicula(String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        Pelicula peliculaElim = null;
+        try {
+            resource = resource.path(java.text.MessageFormat.format("{0}", 
+					new Object[]{id}));
+            peliculaElim = resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+					delete(Pelicula.class);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error; " + e.getMessage());
+            return false;
+        }
+    }
+	
+	public Pelicula consultarPeliculaPorID(String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        Pelicula pelicula = null;
+        try {
+            resource = resource.path(java.text.MessageFormat.format("{0}", 
+					new Object[]{id}));
+            pelicula = resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+					get(Pelicula.class);
+			return pelicula;
+        } catch (Exception e) {
+            System.out.println("Error; " + e.getMessage());
+            return null;
+        }
+    }
+	
+	public List<Pelicula> consultarPeliculas() throws ClientErrorException {
+        WebTarget resource = webTarget;
+        List<Pelicula> listPelis = null;
+        try {
+            Pelicula[] pelis = resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+					get(Pelicula[].class);
+            listPelis = Arrays.asList(pelis);
+			return listPelis;
+        } catch (Exception e) {
+            System.out.println("Error; " + e.getMessage());
+            return null;
+        }
     }
 
     public void close() {

@@ -4,7 +4,10 @@
  */
 package clienterest;
 
+import entidades.Pelicula;
 import entidades.Producto;
+import java.util.List;
+import java.util.Scanner;
 import ws.clienteProducto;
 
 /**
@@ -18,33 +21,111 @@ public class ClienteREST {
      */
     public static void main(String[] args) {
         clienteProducto cliente = new clienteProducto(); 
-        
-        // getJson colección. 
-        Producto[]productos = cliente.getJson();
-        for (int i=0; i<productos.length; i++){
-        System.out.println("Cache el producto: " + productos[i].getNombre());
-        }
-        
-        System.out.print("\n");
-        
-        // getJsonById
-        Producto productoID = cliente.getJsonById(1);
-        System.out.println("Cache el producto: " + productoID.getNombre());
-        
-        System.out.print("\n");
-        
-        // postJson
-        System.out.println(cliente.postJson(new Producto(5, "producto5")));
-        System.out.print("\n");
-        
-        // putJson
-        System.out.println(cliente.putJson(new Producto (3, "nombreNuevo"), 3));
-        System.out.print("\n");
-        
-        // deleteJson
-        System.out.println(cliente.deleteJson(3));
-        System.out.print("\n");
-        
+        Scanner scanner = new Scanner(System.in);
+        int opcion;
+       
+        do {
+            System.out.println("1. Insertar");
+            System.out.println("2. Actualizar");
+            System.out.println("3. Eliminar");
+            System.out.println("4. Consultar pelicula por ID");
+            System.out.println("5. Consultar todo");
+            System.out.println("0. Salir");
+            System.out.print("Ingrese una opción: ");
+            opcion = scanner.nextInt();
+
+            switch (opcion) {
+                case 1:
+                    scanner.nextLine();
+                    System.out.print("Ingrese el nombre de la pelicula: ");
+                    String nombre = scanner.nextLine();
+                    System.out.print("Ingrese el director: ");
+                    String director = scanner.nextLine();
+                    System.out.print("Ingrese la sinopsis: ");
+                    String sinopsis = scanner.nextLine();
+                    Pelicula nuevaPelicula=new Pelicula(nombre,director,sinopsis);
+					boolean agregar=cliente.agregarPelicula(nuevaPelicula);
+                    if(agregar){
+                                        System.out.println("Pelicula insertada correctamente.");
+                    }else{
+                        System.out.println("La pelicula no se pudo insertar correctamente");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Ingrese el ID de la pelicula a actualizar: ");
+                    Long id = scanner.nextLong();
+                    Pelicula peliculaActualizar = cliente.consultarPeliculaPorID(String.valueOf(id));
+                    if (peliculaActualizar != null) {
+						scanner.nextLine();
+                        System.out.print("Ingrese el nombre de la pelicula: ");
+                        peliculaActualizar.setNombre(scanner.nextLine());
+                        System.out.print("Ingrese el director: ");
+                        peliculaActualizar.setDirector(scanner.nextLine());
+                        System.out.print("Ingrese la sinopsis: ");
+                        peliculaActualizar.setSinopsis(scanner.nextLine());
+                        boolean actualizar=cliente.actualizarPelicula(peliculaActualizar, id.toString());
+                        if(actualizar){
+                                        System.out.println("Pelicula actualizada correctamente.");
+						}else{
+							System.out.println("La pelicula no se pudo actualizar correctamente.");
+						}
+                    } else {
+                        System.out.println("La pelicula no fue encontrada.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Ingrese el ID de la pelicula a eliminar: ");
+                    Long idE = scanner.nextLong();
+                    Pelicula peliculaEliminar = cliente.consultarPeliculaPorID(String.valueOf(idE));
+                    if (peliculaEliminar != null) {
+                        boolean eliminar=cliente.eliminarPelicula(idE.toString());
+                        if(eliminar){
+                                        System.out.println("Pelicula eliminada correctamente.");
+						}else{
+							System.out.println("La pelicula no se pudo eliminar correctamente");
+						}
+                    } else {
+                        System.out.println("La pelicula no fue encontrada");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Ingrese el ID de la pelicula a consultar: ");
+                    Long idConsultar = scanner.nextLong();
+                    Pelicula peliculaConsultar = cliente.consultarPeliculaPorID(String.valueOf(idConsultar));
+                    if (peliculaConsultar != null) {
+						System.out.println("Pelicula enocntrada");
+                        System.out.println("ID: " + peliculaConsultar.getId());
+                        System.out.println("Título: " + peliculaConsultar.getNombre());
+                        System.out.println("Director: " + peliculaConsultar.getDirector());
+                        System.out.println("Sinopsis: " + peliculaConsultar.getSinopsis());
+                    } else {
+                        System.out.println("Pelicula no encontrada");
+                    }
+                    break;
+
+                case 5:
+                    List<Pelicula> peliculas = cliente.consultarPeliculas();
+                    System.out.println("Peliculas encontradas: " + peliculas.size());
+                    for (Pelicula pelicula : peliculas) {
+                        System.out.println("ID: " + pelicula.getId());
+                        System.out.println("Título: " + pelicula.getNombre());
+                        System.out.println("Director: " + pelicula.getDirector());
+                        System.out.println("Sinopsis: " + pelicula.getSinopsis());
+                    }
+                    break;
+                case 0:
+                    System.out.println("Saliendo del programa");
+                    break;
+
+                default:
+                    System.out.println("Opción inválida");
+                    break;
+            }
+            System.out.println();
+        } while (opcion != 0);
         
     }
     
