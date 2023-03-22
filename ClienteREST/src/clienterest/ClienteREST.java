@@ -20,16 +20,17 @@ public class ClienteREST {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        clienteProducto cliente = new clienteProducto(); 
+        clienteProducto cliente = new clienteProducto();
         Scanner scanner = new Scanner(System.in);
         int opcion;
-       
+
         do {
             System.out.println("1. Insertar");
             System.out.println("2. Actualizar");
             System.out.println("3. Eliminar");
             System.out.println("4. Consultar pelicula por ID");
             System.out.println("5. Consultar todo");
+            System.out.println("6. Consultar pelicula por director");
             System.out.println("0. Salir");
             System.out.print("Ingrese una opción: ");
             opcion = scanner.nextInt();
@@ -37,66 +38,66 @@ public class ClienteREST {
             switch (opcion) {
                 case 1:
                     scanner.nextLine();
-                    System.out.print("Ingrese el nombre de la pelicula: ");
+                    System.out.print("\nIngrese el nombre de la pelicula: ");
                     String nombre = scanner.nextLine();
                     System.out.print("Ingrese el director: ");
                     String director = scanner.nextLine();
                     System.out.print("Ingrese la sinopsis: ");
                     String sinopsis = scanner.nextLine();
-                    Pelicula nuevaPelicula=new Pelicula(nombre,director,sinopsis);
-					boolean agregar=cliente.agregarPelicula(nuevaPelicula);
-                    if(agregar){
-                                        System.out.println("Pelicula insertada correctamente.");
-                    }else{
+                    Pelicula nuevaPelicula = new Pelicula(nombre, director, sinopsis);
+                    boolean agregar = cliente.agregarPelicula(nuevaPelicula);
+                    if (agregar) {
+                        System.out.println("Pelicula insertada correctamente.");
+                    } else {
                         System.out.println("La pelicula no se pudo insertar correctamente");
                     }
                     break;
 
                 case 2:
-                    System.out.print("Ingrese el ID de la pelicula a actualizar: ");
+                    System.out.print("\nIngrese el ID de la pelicula a actualizar: ");
                     Long id = scanner.nextLong();
                     Pelicula peliculaActualizar = cliente.consultarPeliculaPorID(String.valueOf(id));
                     if (peliculaActualizar != null) {
-						scanner.nextLine();
-                        System.out.print("Ingrese el nombre de la pelicula: ");
+                        scanner.nextLine();
+                        System.out.print("\nIngrese el nombre de la pelicula: ");
                         peliculaActualizar.setNombre(scanner.nextLine());
                         System.out.print("Ingrese el director: ");
                         peliculaActualizar.setDirector(scanner.nextLine());
                         System.out.print("Ingrese la sinopsis: ");
                         peliculaActualizar.setSinopsis(scanner.nextLine());
-                        boolean actualizar=cliente.actualizarPelicula(peliculaActualizar, id.toString());
-                        if(actualizar){
-                                        System.out.println("Pelicula actualizada correctamente.");
-						}else{
-							System.out.println("La pelicula no se pudo actualizar correctamente.");
-						}
+                        boolean actualizar = cliente.actualizarPelicula(peliculaActualizar, id.toString());
+                        if (actualizar) {
+                            System.out.println("Pelicula actualizada correctamente.");
+                        } else {
+                            System.out.println("La pelicula no se pudo actualizar correctamente.");
+                        }
                     } else {
                         System.out.println("La pelicula no fue encontrada.");
                     }
                     break;
 
                 case 3:
-                    System.out.print("Ingrese el ID de la pelicula a eliminar: ");
+                    System.out.print("\nIngrese el ID de la pelicula a eliminar: ");
                     Long idE = scanner.nextLong();
                     Pelicula peliculaEliminar = cliente.consultarPeliculaPorID(String.valueOf(idE));
                     if (peliculaEliminar != null) {
-                        boolean eliminar=cliente.eliminarPelicula(idE.toString());
-                        if(eliminar){
-                                        System.out.println("Pelicula eliminada correctamente.");
-						}else{
-							System.out.println("La pelicula no se pudo eliminar correctamente");
-						}
+                        boolean eliminar = cliente.eliminarPelicula(idE.toString());
+                        if (eliminar) {
+                            System.out.println("Pelicula eliminada correctamente.");
+                        } else {
+                            System.out.println("La pelicula no se pudo eliminar correctamente");
+                        }
                     } else {
                         System.out.println("La pelicula no fue encontrada");
                     }
                     break;
 
                 case 4:
-                    System.out.print("Ingrese el ID de la pelicula a consultar: ");
+                    System.out.print("\nIngrese el ID de la pelicula a consultar: ");
                     Long idConsultar = scanner.nextLong();
                     Pelicula peliculaConsultar = cliente.consultarPeliculaPorID(String.valueOf(idConsultar));
                     if (peliculaConsultar != null) {
-						System.out.println("Pelicula enocntrada");
+                        System.out.println("Pelicula enocntrada");
                         System.out.println("ID: " + peliculaConsultar.getId());
                         System.out.println("Título: " + peliculaConsultar.getNombre());
                         System.out.println("Director: " + peliculaConsultar.getDirector());
@@ -108,14 +109,34 @@ public class ClienteREST {
 
                 case 5:
                     List<Pelicula> peliculas = cliente.consultarPeliculas();
-                    System.out.println("Peliculas encontradas: " + peliculas.size());
+                    System.out.println("\nPeliculas encontradas: " + peliculas.size());
                     for (Pelicula pelicula : peliculas) {
                         System.out.println("ID: " + pelicula.getId());
                         System.out.println("Título: " + pelicula.getNombre());
                         System.out.println("Director: " + pelicula.getDirector());
                         System.out.println("Sinopsis: " + pelicula.getSinopsis());
+                        System.out.println("");
                     }
                     break;
+
+                case 6:
+                    scanner.nextLine();
+                    System.out.print("\nIngrese el director a consultar: ");
+                    String directorConsultar = scanner.nextLine();
+                    List<Pelicula> peliculasConsultadas = cliente.consultarPeliculaPorDirector(String.valueOf(directorConsultar));
+                    if (!peliculasConsultadas.isEmpty()) {
+                        for (Pelicula pelicula : peliculasConsultadas) {
+                            System.out.println("ID: " + pelicula.getId());
+                            System.out.println("Título: " + pelicula.getNombre());
+                            System.out.println("Director: " + pelicula.getDirector());
+                            System.out.println("Sinopsis: " + pelicula.getSinopsis());
+                            System.out.println("");
+                        }
+                    } else {
+                        System.out.println("Peliculas no encontradas");
+                    }
+                    break;
+                    
                 case 0:
                     System.out.println("Saliendo del programa");
                     break;
@@ -126,7 +147,7 @@ public class ClienteREST {
             }
             System.out.println();
         } while (opcion != 0);
-        
+
     }
-    
+
 }
