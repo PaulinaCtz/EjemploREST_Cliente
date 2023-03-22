@@ -76,30 +76,37 @@ public class ProductoResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postJson(Producto producto) {
-        
-        return Response.status(Response.Status.CREATED).entity(producto).build();
+    public Response postJson(Pelicula pelicula) {
+        if(peliculasDAO.agregar(pelicula)){
+            return Response.status(Response.Status.CREATED).entity(pelicula).build();
+        }
+        return Response.status(500).entity(pelicula).build();
     }
 
     /**
      * PUT method for updating or creating an instance of ProductoResource
      * @param id
-     * @param producto
+     * @param pelicula
      * @return 
      */
     @PUT
-    @Path("{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response putJson(@PathParam("id") int id, Producto producto) {
-        
-        return Response.status(Response.Status.NOT_FOUND).build();
+    public Response putJson(@PathParam("id") int id, Pelicula pelicula) {
+        if(peliculasDAO.actualizar(pelicula)){
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(500).entity(pelicula).build();
     }
     
     @DELETE
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteJson(@PathParam("id") int id) {
+    public Response deleteJson(@PathParam("id") Long id) {
+        if(peliculasDAO.eliminar(id)){
+            return Response.status(Response.Status.OK).build();
+        }
         return Response.status(Response.Status.NOT_FOUND).entity("No se ha encontrado el recurso a eliminar.").build();
     }
 }
